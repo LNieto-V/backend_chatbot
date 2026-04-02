@@ -1,14 +1,16 @@
-"""Chat service — handles chat message processing.
+"""Chat service — handles chat message processing with RAG.
 
 Stage 2: Integrates with LLM via LangChain.
+Stage 5+: Integrates Vector Retrieval from Supabase.
 """
 
 from app.services.llm_service import generate_response
+from app.services.retrieval_service import retrieve_context
 from app.utils.prompt_loader import load_markdown_file
 
 
 async def process_message(message: str) -> str:
-    """Process a user message and return a response from the LLM.
+    """Process a user message using full RAG pipeline.
 
     Args:
         message: The user's input message.
@@ -16,17 +18,16 @@ async def process_message(message: str) -> str:
     Returns:
         A response string from the AI.
     """
-    # Load basic context for Stage 2 (static markdown files)
+    # 1. Recuperar contexto dinámico de Supabase (Stage 5+)
+    # Esto busca fragmentos relevantes del knowledge.md basándose en el mensaje
+    retrieved_context = await retrieve_context(message)
+
+    # 2. Cargar contexto estático de sensores y tendencias (Stage 2)
+    # Por ahora vienen de archivos, en Stage 6 final podrían venir del request
     sensor_context = load_markdown_file("database.md")
     trend_context = load_markdown_file("trend_context.md")
 
-    # In Stage 2, there is no RAG yet,
-    # so retrieved_context will be empty or a generic placeholder.
-    retrieved_context = (
-        "En esta etapa aún no se realiza la recuperación de conocimiento específico."
-    )
-
-    # Call the LLM to generate the response
+    # 3. Generar respuesta con el LLM inyectando TODO el contexto
     response = await generate_response(
         user_input=message,
         sensor_context=sensor_context,
