@@ -11,6 +11,8 @@ wheels/
 
 # Environment variables
 .env
+.env.local
+.env.example
 
 # uv
 uv.lock
