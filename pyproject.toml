@@ -10,6 +10,9 @@ dependencies = [
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
     "python-dotenv>=1.0.0",
+    "langchain>=1.2.14",
+    "langchain-core>=1.2.24",
+    "langchain-google-genai>=4.2.1",
 ]
 
 [tool.ruff]
